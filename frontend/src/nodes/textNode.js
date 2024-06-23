@@ -1,35 +1,47 @@
-// textNode.js
-
-import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+import { useEffect, useState } from "react";
+import { HandleType, Header, Textarea } from "../Common"
+import { findVariables } from './Utils';
+import { TEXT_NODE_LISTS, HANDLE_INPUT } from "./constants";
 
 export const TextNode = ({ id, data }) => {
-  const [currText, setCurrText] = useState(data?.text || '{{input}}');
+    const [currText, setCurrText] = useState(data?.text || '{{input}}');
+    const [handlesList, setHandlesList] = useState(TEXT_NODE_LISTS);
+    const [variables, setVariables] = useState([]);
 
-  const handleTextChange = (e) => {
-    setCurrText(e.target.value);
-  };
+    const onChangeText = (e) => {
+        e.currentTarget.style.overflow = "Hidden";
+        e.currentTarget.style.height = "100%";
+        e.target.parentElement.style.height = e.currentTarget.scrollHeight + "px"
+        setCurrText(e.currentTarget.value);
+    }
 
-  return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <div>
-        <span>Text</span>
-      </div>
-      <div>
-        <label>
-          Text:
-          <input 
-            type="text" 
-            value={currText} 
-            onChange={handleTextChange} 
-          />
-        </label>
-      </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        id={`${id}-output`}
-      />
-    </div>
-  );
+    useEffect(() => {
+        setVariables(findVariables(currText));
+    }, [currText]);
+
+    useEffect(() => {
+        const userDefinedHandles = variables.map((_, i) => ({ type: HANDLE_INPUT.TARGET, value: `variables` }))
+        setHandlesList([...TEXT_NODE_LISTS, ...userDefinedHandles]);
+    }, [variables]);
+
+    return (
+        <div className="card">
+            <div className="card-body">
+                <HandleType
+                    id={id}
+                    data={handlesList}
+                />
+                <Header
+                    id={id}
+                    title="Text"
+                />
+                <Textarea
+                    id={id}
+                    label="Text"
+                    value={currText}
+                    handleChange={onChangeText}
+                />
+            </div>
+        </div>
+    )
 }

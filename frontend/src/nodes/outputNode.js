@@ -1,47 +1,48 @@
-// outputNode.js
+import { HandleType, Header, InputType, SelectionType } from "../Common"
+import { OUTPUT_NODE_LISTS, OUTPUT_NODE_OPTIONS } from "./constants"
+import { useState } from "react";
 
-import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
 
 export const OutputNode = ({ id, data }) => {
-  const [currName, setCurrName] = useState(data?.outputName || id.replace('customOutput-', 'output_'));
-  const [outputType, setOutputType] = useState(data.outputType || 'Text');
+    const [currName, setCurrName] = useState(
+        data.name || id.replace("customOutput-", "output_")
+    );
 
-  const handleNameChange = (e) => {
-    setCurrName(e.target.value);
-  };
+    const [selectedValue, setSelectedValue] = useState('text')
 
-  const handleTypeChange = (e) => {
-    setOutputType(e.target.value);
-  };
+    const handleNameChange = (e) => {
+        setCurrName(e.target.value);
+    };
 
-  return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <Handle
-        type="target"
-        position={Position.Left}
-        id={`${id}-value`}
-      />
-      <div>
-        <span>Output</span>
-      </div>
-      <div>
-        <label>
-          Name:
-          <input 
-            type="text" 
-            value={currName} 
-            onChange={handleNameChange} 
-          />
-        </label>
-        <label>
-          Type:
-          <select value={outputType} onChange={handleTypeChange}>
-            <option value="Text">Text</option>
-            <option value="File">Image</option>
-          </select>
-        </label>
-      </div>
-    </div>
-  );
+    const onChangeSelectedValue = (v) => {
+        setSelectedValue(v.currentTarget.value);
+    }
+
+    return (
+        <div className="card">
+            <div className="card-body">
+                <HandleType
+                    id={id}
+                    data={OUTPUT_NODE_LISTS}
+                />
+                <Header
+                    id={id}
+                    title="Output"
+                />
+                <InputType
+                    id={id}
+                    label="Name"
+                    value={currName}
+                    handleChange={handleNameChange}
+                />
+                <SelectionType
+                    id={id}
+                    label="Type"
+                    options={OUTPUT_NODE_OPTIONS}
+                    value={selectedValue}
+                    onChange={onChangeSelectedValue}
+                />
+            </div>
+        </div>
+    )
 }

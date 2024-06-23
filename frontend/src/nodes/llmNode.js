@@ -1,34 +1,50 @@
-// llmNode.js
 
-import { Handle, Position } from 'reactflow';
+import { useState } from 'react';
+import { HandleType, Header, InputType } from '../Common'
+import { LLM_NODE_LISTS } from './constants'
+
+
 
 export const LLMNode = ({ id, data }) => {
 
-  return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <Handle
-        type="target"
-        position={Position.Left}
-        id={`${id}-system`}
-        style={{top: `${100/3}%`}}
-      />
-      <Handle
-        type="target"
-        position={Position.Left}
-        id={`${id}-prompt`}
-        style={{top: `${200/3}%`}}
-      />
-      <div>
-        <span>LLM</span>
-      </div>
-      <div>
-        <span>This is a LLM.</span>
-      </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        id={`${id}-response`}
-      />
-    </div>
-  );
+    const [systemText, setSystemText] = useState('System');
+    const [promptText, setPromptText] = useState('Prompt');
+
+    const handlePromptText = (e) => {
+        setPromptText(e.target.value);
+    }
+
+    const handleSystemText = (e) => {
+        setSystemText(e.target.value);
+    }
+
+    return (
+        <div className='card'>
+            <div className='card-body pa-4'>
+                <Header
+                    id={id}
+                    title="LLM"
+                />
+
+                <InputType
+                    id={id}
+                    label="System"
+                    value={systemText}
+                    handleChange={handleSystemText}
+                />
+
+                <InputType
+                    id={id}
+                    label="Prompt"
+                    value={promptText}
+                    handleChange={handlePromptText}
+                />
+
+                <HandleType
+                    id={id}
+                    data={LLM_NODE_LISTS}
+                />
+            </div>
+        </div>
+    )
 }
